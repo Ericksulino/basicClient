@@ -102,7 +102,7 @@ function main() {
                             _c)]);
                     _d.label = 5;
                 case 5:
-                    _d.trys.push([5, , 20, 21]);
+                    _d.trys.push([5, , 22, 23]);
                     network = gateway.getNetwork(channelName);
                     contract = network.getContract(chaincodeName);
                     argument = process.argv[2];
@@ -111,18 +111,19 @@ function main() {
                         case "initLedger": return [3 /*break*/, 6];
                         case "submitTransaction": return [3 /*break*/, 8];
                         case "createAsset": return [3 /*break*/, 10];
-                        case "getAll": return [3 /*break*/, 12];
-                        case "getByKey": return [3 /*break*/, 14];
-                        case "updateAsset": return [3 /*break*/, 16];
+                        case "createAssetEndorse": return [3 /*break*/, 12];
+                        case "getAll": return [3 /*break*/, 14];
+                        case "getByKey": return [3 /*break*/, 16];
+                        case "updateAsset": return [3 /*break*/, 18];
                     }
-                    return [3 /*break*/, 18];
+                    return [3 /*break*/, 20];
                 case 6: 
                 // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
                 return [4 /*yield*/, initLedger(contract)];
                 case 7:
                     // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
                     _d.sent();
-                    return [3 /*break*/, 19];
+                    return [3 /*break*/, 21];
                 case 8:
                     id = process.argv[3];
                     newOwner = process.argv[4];
@@ -131,45 +132,49 @@ function main() {
                 case 9:
                     // Update an existing asset asynchronously.
                     _d.sent();
-                    return [3 /*break*/, 19];
+                    return [3 /*break*/, 21];
                 case 10: 
                 // Create a new asset on the ledger.
                 return [4 /*yield*/, createAsset(contract)];
                 case 11:
                     // Create a new asset on the ledger.
                     _d.sent();
-                    return [3 /*break*/, 19];
-                case 12: 
+                    return [3 /*break*/, 21];
+                case 12: return [4 /*yield*/, createAssetEndorse(contract)];
+                case 13:
+                    _d.sent();
+                    return [3 /*break*/, 21];
+                case 14: 
                 // Return all the current assets on the ledger.
                 return [4 /*yield*/, getAllAssets(contract)];
-                case 13:
+                case 15:
                     // Return all the current assets on the ledger.
                     _d.sent();
-                    return [3 /*break*/, 19];
-                case 14:
+                    return [3 /*break*/, 21];
+                case 16:
                     key = process.argv[3];
                     // Get the asset details by assetID.
                     return [4 /*yield*/, readAssetByID(contract, key)];
-                case 15:
+                case 17:
                     // Get the asset details by assetID.
                     _d.sent();
-                    return [3 /*break*/, 19];
-                case 16: 
+                    return [3 /*break*/, 21];
+                case 18: 
                 // Update an asset which does not exist.
                 return [4 /*yield*/, updateNonExistentAsset(contract)];
-                case 17:
+                case 19:
                     // Update an asset which does not exist.
                     _d.sent();
-                    return [3 /*break*/, 19];
-                case 18:
-                    console.log("Argumento Inválido!: " + argument);
-                    _d.label = 19;
-                case 19: return [3 /*break*/, 21];
+                    return [3 /*break*/, 21];
                 case 20:
+                    console.log("Argumento Inválido!: " + argument);
+                    _d.label = 21;
+                case 21: return [3 /*break*/, 23];
+                case 22:
                     gateway.close();
                     client.close();
                     return [7 /*endfinally*/];
-                case 21: return [2 /*return*/];
+                case 23: return [2 /*return*/];
             }
         });
     });
@@ -277,6 +282,26 @@ function createAsset(contract) {
                     return [4 /*yield*/, contract.submitTransaction('CreateAsset', assetId, 'yellow', '5', 'Tom', '1300')];
                 case 1:
                     _a.sent();
+                    console.log('*** Transaction ' + assetId + ' committed successfully');
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function createAssetEndorse(contract) {
+    return __awaiter(this, void 0, void 0, function () {
+        var proposal, transaction, commit;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
+                    proposal = contract.newProposal('CreateAsset', { arguments: [assetId, 'yellow', '5', 'Tom', '1300'] });
+                    return [4 /*yield*/, proposal.endorse()];
+                case 1:
+                    transaction = _a.sent();
+                    return [4 /*yield*/, transaction.submit()];
+                case 2:
+                    commit = _a.sent();
                     console.log('*** Transaction ' + assetId + ' committed successfully');
                     return [2 /*return*/];
             }

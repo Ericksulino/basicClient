@@ -86,10 +86,9 @@ async function main(): Promise<void> {
                 // Create a new asset on the ledger.
                 await createAsset(contract);
                 break;
-            // case "createAssetMultiple":
-            //     const n = parseInt(process.argv[3]);
-            //     await createAssetMultiple(contract, n);
-            //     break;
+            case "createAssetEndorse":
+               await createAssetEndorse(contract);
+               break;
             case "getAll":
                 // Return all the current assets on the ledger.
                 await getAllAssets(contract);
@@ -177,6 +176,16 @@ async function createAsset(contract: Contract): Promise<void> {
         'Tom',
         '1300',
     );
+
+    console.log('*** Transaction '+assetId+' committed successfully');
+}
+
+async function createAssetEndorse(contract: Contract) {
+    console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
+
+    const proposal = contract.newProposal('CreateAsset',{arguments: [assetId,'yellow','5','Tom','1300']});
+    const transaction = await proposal.endorse();
+    const commit = await transaction.submit();
 
     console.log('*** Transaction '+assetId+' committed successfully');
 }
