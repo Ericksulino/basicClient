@@ -66,81 +66,110 @@ var utf8Decoder = new util_1.TextDecoder();
 var assetId = "asset".concat(Date.now());
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var client, gateway, _a, network, contract;
-        var _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var client, gateway, _a, network, contract, argument, _b, id, newOwner, key;
+        var _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0: return [4 /*yield*/, displayInputParameters()];
                 case 1:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, newGrpcConnection()];
                 case 2:
-                    client = _c.sent();
+                    client = _d.sent();
                     _a = fabric_gateway_1.connect;
-                    _b = {
+                    _c = {
                         client: client
                     };
                     return [4 /*yield*/, newIdentity()];
                 case 3:
-                    _b.identity = _c.sent();
+                    _c.identity = _d.sent();
                     return [4 /*yield*/, newSigner()];
                 case 4:
-                    gateway = _a.apply(void 0, [(_b.signer = _c.sent(),
+                    gateway = _a.apply(void 0, [(_c.signer = _d.sent(),
                             // Default timeouts for different gRPC calls
-                            _b.evaluateOptions = function () {
+                            _c.evaluateOptions = function () {
                                 return { deadline: Date.now() + 5000 }; // 5 seconds
                             },
-                            _b.endorseOptions = function () {
+                            _c.endorseOptions = function () {
                                 return { deadline: Date.now() + 15000 }; // 15 seconds
                             },
-                            _b.submitOptions = function () {
+                            _c.submitOptions = function () {
                                 return { deadline: Date.now() + 5000 }; // 5 seconds
                             },
-                            _b.commitStatusOptions = function () {
+                            _c.commitStatusOptions = function () {
                                 return { deadline: Date.now() + 60000 }; // 1 minute
                             },
-                            _b)]);
-                    _c.label = 5;
+                            _c)]);
+                    _d.label = 5;
                 case 5:
-                    _c.trys.push([5, , 12, 13]);
+                    _d.trys.push([5, , 20, 21]);
                     network = gateway.getNetwork(channelName);
                     contract = network.getContract(chaincodeName);
-                    // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
-                    return [4 /*yield*/, initLedger(contract)];
-                case 6:
-                    // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
-                    _c.sent();
-                    // Return all the current assets on the ledger.
-                    return [4 /*yield*/, getAllAssets(contract)];
+                    argument = process.argv[2];
+                    _b = argument;
+                    switch (_b) {
+                        case "initLedger": return [3 /*break*/, 6];
+                        case "submitTransaction": return [3 /*break*/, 8];
+                        case "createAsset": return [3 /*break*/, 10];
+                        case "getAll": return [3 /*break*/, 12];
+                        case "getByKey": return [3 /*break*/, 14];
+                        case "updateAsset": return [3 /*break*/, 16];
+                    }
+                    return [3 /*break*/, 18];
+                case 6: 
+                // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
+                return [4 /*yield*/, initLedger(contract)];
                 case 7:
-                    // Return all the current assets on the ledger.
-                    _c.sent();
-                    // Create a new asset on the ledger.
-                    return [4 /*yield*/, createAsset(contract)];
+                    // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
+                    _d.sent();
+                    return [3 /*break*/, 19];
                 case 8:
-                    // Create a new asset on the ledger.
-                    _c.sent();
+                    id = process.argv[3];
+                    newOwner = process.argv[4];
                     // Update an existing asset asynchronously.
                     return [4 /*yield*/, transferAssetAsync(contract)];
                 case 9:
                     // Update an existing asset asynchronously.
-                    _c.sent();
+                    _d.sent();
+                    return [3 /*break*/, 19];
+                case 10: 
+                // Create a new asset on the ledger.
+                return [4 /*yield*/, createAsset(contract)];
+                case 11:
+                    // Create a new asset on the ledger.
+                    _d.sent();
+                    return [3 /*break*/, 19];
+                case 12: 
+                // Return all the current assets on the ledger.
+                return [4 /*yield*/, getAllAssets(contract)];
+                case 13:
+                    // Return all the current assets on the ledger.
+                    _d.sent();
+                    return [3 /*break*/, 19];
+                case 14:
+                    key = process.argv[3];
                     // Get the asset details by assetID.
                     return [4 /*yield*/, readAssetByID(contract)];
-                case 10:
+                case 15:
                     // Get the asset details by assetID.
-                    _c.sent();
+                    _d.sent();
+                    return [3 /*break*/, 19];
+                case 16: 
+                // Update an asset which does not exist.
+                return [4 /*yield*/, updateNonExistentAsset(contract)];
+                case 17:
                     // Update an asset which does not exist.
-                    return [4 /*yield*/, updateNonExistentAsset(contract)];
-                case 11:
-                    // Update an asset which does not exist.
-                    _c.sent();
-                    return [3 /*break*/, 13];
-                case 12:
+                    _d.sent();
+                    return [3 /*break*/, 19];
+                case 18:
+                    console.log("Argumento Inválido!: " + argument);
+                    _d.label = 19;
+                case 19: return [3 /*break*/, 21];
+                case 20:
                     gateway.close();
                     client.close();
                     return [7 /*endfinally*/];
-                case 13: return [2 /*return*/];
+                case 21: return [2 /*return*/];
             }
         });
     });

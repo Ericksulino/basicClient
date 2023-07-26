@@ -69,23 +69,43 @@ async function main(): Promise<void> {
         // Get the smart contract from the network.
         const contract = network.getContract(chaincodeName);
 
-        // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
-        await initLedger(contract);
+        const argument = process.argv[2];
 
-        // Return all the current assets on the ledger.
-        await getAllAssets(contract);
-
-        // Create a new asset on the ledger.
-        await createAsset(contract);
-
-        // Update an existing asset asynchronously.
-        await transferAssetAsync(contract);
-
-        // Get the asset details by assetID.
-        await readAssetByID(contract);
-
-        // Update an asset which does not exist.
-        await updateNonExistentAsset(contract)
+        switch (argument) {
+            case "initLedger":
+                 // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
+                await initLedger(contract);
+                break;
+            case "submitTransaction":
+                const id = process.argv[3];
+                const newOwner = process.argv[4];
+                // Update an existing asset asynchronously.
+                await transferAssetAsync(contract);
+                break;
+            case "createAsset":
+                // Create a new asset on the ledger.
+                await createAsset(contract);
+                break;
+            // case "createAssetMultiple":
+            //     const n = parseInt(process.argv[3]);
+            //     await createAssetMultiple(contract, n);
+            //     break;
+            case "getAll":
+                // Return all the current assets on the ledger.
+                await getAllAssets(contract);
+                break;
+            case "getByKey":
+                const key = process.argv[3];
+                // Get the asset details by assetID.
+                await readAssetByID(contract);
+                break;
+            case "updateAsset":
+                // Update an asset which does not exist.
+                await updateNonExistentAsset(contract)
+                break;
+            default:
+                console.log("Argumento Inválido!: "+argument);
+        }
     } finally {
         gateway.close();
         client.close();
