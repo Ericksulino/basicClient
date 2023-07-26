@@ -1,0 +1,16 @@
+{
+  "name": "basicclient",
+  "version": "1.0.0",
+  "description": "Asset Transfer Basic Application implemented in typeScript using fabric-gateway",
+  "main": "dist/app.js",
+  "scripts": {
+    "start": "tsc && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.8.20"
+  }
+}
