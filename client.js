@@ -290,14 +290,21 @@ function createAsset(contract) {
 }
 function createAssetEndorse(contract) {
     return __awaiter(this, void 0, void 0, function () {
-        var proposal;
+        var proposal, transaction, commit;
         return __generator(this, function (_a) {
-            console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
-            proposal = contract.newProposal('CreateAsset', { arguments: [assetId, 'yellow', '5', 'Tom', '1300'] });
-            //const transaction = await proposal.endorse();
-            //const commit = await transaction.submit();
-            console.log('*** Transaction ' + assetId + ' committed successfully');
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
+                    proposal = contract.newProposal('CreateAsset', { arguments: [assetId, 'yellow', '5', 'Tom', '1300'] });
+                    return [4 /*yield*/, proposal.endorse()];
+                case 1:
+                    transaction = _a.sent();
+                    return [4 /*yield*/, transaction.submit()];
+                case 2:
+                    commit = _a.sent();
+                    console.log('*** Transaction ' + assetId + ' committed successfully');
+                    return [2 /*return*/];
+            }
         });
     });
 }
