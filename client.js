@@ -149,7 +149,7 @@ function main() {
                 case 14:
                     key = process.argv[3];
                     // Get the asset details by assetID.
-                    return [4 /*yield*/, readAssetByID(contract)];
+                    return [4 /*yield*/, readAssetByID(contract, key)];
                 case 15:
                     // Get the asset details by assetID.
                     _d.sent();
@@ -277,7 +277,7 @@ function createAsset(contract) {
                     return [4 /*yield*/, contract.submitTransaction('CreateAsset', assetId, 'yellow', '5', 'Tom', '1300')];
                 case 1:
                     _a.sent();
-                    console.log('*** Transaction committed successfully');
+                    console.log('*** Transaction ' + assetId + ' committed successfully');
                     return [2 /*return*/];
             }
         });
@@ -314,14 +314,14 @@ function transferAssetAsync(contract) {
         });
     });
 }
-function readAssetByID(contract) {
+function readAssetByID(contract, id) {
     return __awaiter(this, void 0, void 0, function () {
         var resultBytes, resultJson, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     console.log('\n--> Evaluate Transaction: ReadAsset, function returns asset attributes');
-                    return [4 /*yield*/, contract.evaluateTransaction('ReadAsset', assetId)];
+                    return [4 /*yield*/, contract.evaluateTransaction('ReadAsset', id)];
                 case 1:
                     resultBytes = _a.sent();
                     resultJson = utf8Decoder.decode(resultBytes);

@@ -97,7 +97,7 @@ async function main(): Promise<void> {
             case "getByKey":
                 const key = process.argv[3];
                 // Get the asset details by assetID.
-                await readAssetByID(contract);
+                await readAssetByID(contract, key);
                 break;
             case "updateAsset":
                 // Update an asset which does not exist.
@@ -178,7 +178,7 @@ async function createAsset(contract: Contract): Promise<void> {
         '1300',
     );
 
-    console.log('*** Transaction committed successfully');
+    console.log('*** Transaction '+assetId+' committed successfully');
 }
 
 /**
@@ -204,10 +204,10 @@ async function transferAssetAsync(contract: Contract): Promise<void> {
     console.log('*** Transaction committed successfully');
 }
 
-async function readAssetByID(contract: Contract): Promise<void> {
+async function readAssetByID(contract: Contract, id): Promise<void> {
     console.log('\n--> Evaluate Transaction: ReadAsset, function returns asset attributes');
 
-    const resultBytes = await contract.evaluateTransaction('ReadAsset', assetId);
+    const resultBytes = await contract.evaluateTransaction('ReadAsset', id);
 
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
