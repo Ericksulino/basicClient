@@ -184,8 +184,8 @@ async function createAssetEndorse(contract: Contract) {
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
 
     const proposal = contract.newProposal('CreateAsset',{arguments: [assetId,'yellow','5','Tom','1300']});
-    const transaction = await proposal.endorse();
-    const commit = await transaction.submit();
+    //const transaction = await proposal.endorse();
+    //const commit = await transaction.submit();
 
     console.log('*** Transaction '+assetId+' committed successfully');
 }
