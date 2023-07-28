@@ -76,11 +76,11 @@ async function main(): Promise<void> {
                  // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
                 await initLedger(contract);
                 break;
-            case "submitTransaction":
+            case "transferAsset":
                 const id = process.argv[3];
                 const newOwner = process.argv[4];
                 // Update an existing asset asynchronously.
-                await transferAssetAsync(contract);
+                await transferAssetAsync(contract,id,newOwner);
                 break;
             case "createAsset":
                 // Create a new asset on the ledger.
@@ -196,11 +196,11 @@ async function createAssetEndorse(contract: Contract) {
  * Submit transaction asynchronously, allowing the application to process the smart contract response (e.g. update a UI)
  * while waiting for the commit notification.
  */
-async function transferAssetAsync(contract: Contract): Promise<void> {
+async function transferAssetAsync(contract: Contract, id, newOwner): Promise<void> {
     console.log('\n--> Async Submit Transaction: TransferAsset, updates existing asset owner');
 
     const commit = await contract.submitAsync('TransferAsset', {
-        arguments: [assetId, 'Saptha'],
+        arguments: [id, newOwner],
     });
     const oldOwner = utf8Decoder.decode(commit.getResult());
 
