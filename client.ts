@@ -138,6 +138,10 @@ async function newSigner(): Promise<Signer> {
     return signers.newPrivateKeySigner(privateKey);
 }
 
+//const methods = ["InitLedger","createCar","queryAllCars","queryCar"];
+
+const methods = ["InitLedger","CreateAsset","GetAllAssets","ReadAsset","TransferAsset",'UpdateAsset'];
+
 /**
  * This type of transaction would typically only be run once by an application the first time it was started after its
  * initial deployment. A new version of the chaincode deployed later would likely not need to run an "init" function.
@@ -145,10 +149,11 @@ async function newSigner(): Promise<Signer> {
 async function initLedger(contract: Contract): Promise<void> {
     console.log('\n--> Submit Transaction: InitLedger, function creates the initial set of assets on the ledger');
 
-    await contract.submitTransaction('InitLedger');
+    await contract.submitTransaction(methods[0]);
 
     console.log('*** Transaction committed successfully');
 }
+
 
 /**
  * Evaluate a transaction to query ledger state.
@@ -156,7 +161,7 @@ async function initLedger(contract: Contract): Promise<void> {
 async function getAllAssets(contract: Contract): Promise<void> {
     console.log('\n--> Evaluate Transaction: GetAllAssets, function returns all the current assets on the ledger');
 
-    const resultBytes = await contract.evaluateTransaction('GetAllAssets');
+    const resultBytes = await contract.evaluateTransaction(methods[2]);
 
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
@@ -170,7 +175,7 @@ async function createAsset(contract: Contract): Promise<void> {
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
 
     await contract.submitTransaction(
-        'CreateAsset',
+        methods[1],
         assetId,
         'yellow',
         '5',
@@ -184,7 +189,7 @@ async function createAsset(contract: Contract): Promise<void> {
 async function createAssetEndorse(contract: Contract) {
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
 
-    const proposal = contract.newProposal('CreateAsset',{arguments: [assetId,'yellow','5','Tom','1300']});
+    const proposal = contract.newProposal(methods[1],{arguments: [assetId,'yellow','5','Tom','1300']});
     const transaction = await proposal.endorse();
     const commit = await transaction.submit();
 
@@ -206,7 +211,7 @@ async function createAssetEndorse(contract: Contract) {
 async function transferAssetAsync(contract: Contract, id, newOwner): Promise<void> {
     console.log('\n--> Async Submit Transaction: TransferAsset, updates existing asset owner');
 
-    const commit = await contract.submitAsync('TransferAsset', {
+    const commit = await contract.submitAsync(methods[4], {
         arguments: [id, newOwner],
     });
     const oldOwner = utf8Decoder.decode(commit.getResult());
@@ -225,7 +230,7 @@ async function transferAssetAsync(contract: Contract, id, newOwner): Promise<voi
 async function readAssetByID(contract: Contract, id): Promise<void> {
     console.log('\n--> Evaluate Transaction: ReadAsset, function returns asset attributes');
 
-    const resultBytes = await contract.evaluateTransaction('ReadAsset', id);
+    const resultBytes = await contract.evaluateTransaction(methods[3], id);
 
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
@@ -240,7 +245,7 @@ async function updateNonExistentAsset(contract: Contract, id): Promise<void>{
 
     try {
         await contract.submitTransaction(
-            'UpdateAsset',
+            methods[5],
             id,
             'blue',
             '5',
