@@ -205,7 +205,7 @@ async function transferAssetAsync(contract: Contract, id, newOwner): Promise<voi
     });
     const oldOwner = utf8Decoder.decode(commit.getResult());
 
-    console.log(`*** Successfully submitted transaction to transfer ownership from ${oldOwner} to Saptha`);
+    console.log(`*** Successfully submitted transaction to transfer ownership from ${oldOwner} to ${newOwner}`);
     console.log('*** Waiting for transaction commit');
 
     const status = await commit.getStatus();
@@ -230,7 +230,7 @@ async function readAssetByID(contract: Contract, id): Promise<void> {
  * submitTransaction() will throw an error containing details of any error responses from the smart contract.
  */
 async function updateNonExistentAsset(contract: Contract, id): Promise<void>{
-    console.log('\n--> Submit Transaction: UpdateAsset asset70, asset70 does not exist and should return an error');
+    console.log('\n--> Submit Transaction: UpdateAsset '+id+', '+id+' does not exist and should return an error');
 
     try {
         await contract.submitTransaction(
