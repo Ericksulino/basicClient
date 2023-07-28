@@ -4,6 +4,7 @@
   "description": "Asset Transfer Basic Application implemented in typeScript using fabric-gateway",
   "main": "dist/client.js",
   "scripts": {
+    "build": "tsc",
     "start": "node dist/client.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
