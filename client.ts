@@ -17,8 +17,8 @@ const chaincodeName = envOrDefault('CHAINCODE_NAME', 'fabcar');
 const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
 // Path to crypto materials.
-const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..','organizations', 'peerOrganizations', 'org1.example.com'));
-
+//const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..','organizations', 'peerOrganizations', 'org1.example.com'));
+const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..', 'peerOrganizations', 'org1.example.com'));
 // Path to user private key directory.
 const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore'));
 
