@@ -100,7 +100,8 @@ async function main(): Promise<void> {
                 break;
             case "updateAsset":
                 // Update an asset which does not exist.
-                await updateNonExistentAsset(contract)
+                const keyUp = process.argv[3];
+                await updateNonExistentAsset(contract,keyUp)
                 break;
             default:
                 console.log("Argumento Inválido!: "+argument);
@@ -228,13 +229,13 @@ async function readAssetByID(contract: Contract, id): Promise<void> {
 /**
  * submitTransaction() will throw an error containing details of any error responses from the smart contract.
  */
-async function updateNonExistentAsset(contract: Contract): Promise<void>{
+async function updateNonExistentAsset(contract: Contract, id): Promise<void>{
     console.log('\n--> Submit Transaction: UpdateAsset asset70, asset70 does not exist and should return an error');
 
     try {
         await contract.submitTransaction(
             'UpdateAsset',
-            'asset70',
+            id,
             'blue',
             '5',
             'Tomoko',
