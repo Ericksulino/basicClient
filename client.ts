@@ -187,7 +187,9 @@ async function createAssetEndorse(contract: Contract) {
     const transaction = await proposal.endorse();
     const commit = await transaction.submit();
 
-    console.log('*** Transaction '+assetId+' committed successfully');
+    const result = transaction.getResult();
+    const status = await commit.getStatus();
+    console.log('*** Transaction '+assetId+' committed successfully, result:'+result+' status:'+status+'');
 }
 
 /**

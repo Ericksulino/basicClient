@@ -2,9 +2,9 @@
   "name": "basicclient",
   "version": "1.0.0",
   "description": "Asset Transfer Basic Application implemented in typeScript using fabric-gateway",
-  "main": "dist/app.js",
+  "main": "dist/client.js",
   "scripts": {
-    "start": "tsc && node dist/app.js",
+    "start": "node dist/client.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
