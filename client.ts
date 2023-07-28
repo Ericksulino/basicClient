@@ -189,7 +189,13 @@ async function createAssetEndorse(contract: Contract) {
     const commit = await transaction.submit();
 
     const result = transaction.getResult();
+    console.log('*** Waiting for transaction commit');
+
     const status = await commit.getStatus();
+    if (!status.successful) {
+        throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
+    }
+
     console.log('*** Transaction '+assetId+' committed successfully');
 }
 
