@@ -12,13 +12,13 @@ import * as path from 'path';
 import { TextDecoder } from 'util';
 
 const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
-//const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
-const chaincodeName = envOrDefault('CHAINCODE_NAME', 'fabcar');
+const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
+//const chaincodeName = envOrDefault('CHAINCODE_NAME', 'fabcar');
 const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
 // Path to crypto materials.
-//const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..','organizations', 'peerOrganizations', 'org1.example.com'));
-const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..', 'peerOrganizations', 'org1.example.com'));
+const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..','organizations', 'peerOrganizations', 'org1.example.com'));
+//const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..', 'peerOrganizations', 'org1.example.com'));
 // Path to user private key directory.
 const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore'));
 
@@ -139,9 +139,9 @@ async function newSigner(): Promise<Signer> {
     return signers.newPrivateKeySigner(privateKey);
 }
 
-const methods = ["InitLedger","createCar","queryAllCars","queryCar","transferCar",'updateCar'];
+// const methods = ["InitLedger","createCar","queryAllCars","queryCar","transferCar",'updateCar'];
 
-//const methods = ["InitLedger","CreateAsset","GetAllAssets","ReadAsset","TransferAsset",'UpdateAsset'];
+const methods = ["InitLedger","CreateAsset","GetAllAssets","ReadAsset","TransferAsset",'UpdateAsset'];
 
 /**
  * This type of transaction would typically only be run once by an application the first time it was started after its
