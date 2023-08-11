@@ -190,20 +190,50 @@ async function createAsset(contract: Contract): Promise<void> {
 async function createAssetEndorse(contract: Contract) {
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
 
-    const proposal = contract.newProposal(methods[1],{arguments: [assetId,'yellow','5','Tom','1300']});
+    // Início da medição do tempo total
+    const totalStartTime = performance.now();
+
+    const proposal = contract.newProposal(methods[1], { arguments: [assetId, 'yellow', '5', 'Tom', '1300'] });
+
+    // Início da medição do tempo do endorse
+    const endorseStartTime = performance.now();
+
     const transaction = await proposal.endorse();
+
+    // Fim da medição do tempo do endorse
+    const endorseEndTime = performance.now();
+    const endorseTime = endorseEndTime - endorseStartTime;
+
+    // Início da medição do tempo do commit
+    const commitStartTime = performance.now();
+
     const commit = await transaction.submit();
+
+    // Fim da medição do tempo do commit
+    const commitEndTime = performance.now();
+    const commitTime = commitEndTime - commitStartTime;
 
     const result = transaction.getResult();
     console.log('*** Waiting for transaction commit');
 
     const status = await commit.getStatus();
+
     if (!status.successful) {
         throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
     }
 
-    console.log('*** Transaction '+assetId+' committed successfully');
+    // Fim da medição do tempo total
+    const totalEndTime = performance.now();
+    const totalTime = totalEndTime - totalStartTime;
+
+    console.log('*** Transaction ' + assetId + ' committed successfully');
+
+    // Exibir os tempos medidos
+    console.log(`Time for endorse: ${endorseTime.toFixed(2)} ms`);
+    console.log(`Time for commit: ${commitTime.toFixed(2)} ms`);
+    console.log(`Total time: ${totalTime.toFixed(2)} ms`);
 }
+
 
 /**
  * Submit transaction asynchronously, allowing the application to process the smart contract response (e.g. update a UI)
