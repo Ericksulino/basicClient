@@ -197,13 +197,14 @@ async function createAsset(contract: Contract): Promise<void> {
 }
 
 async function createAssetEndorse(contract: Contract, n) {
-    let hash = generateRandomHash();
+    
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
     if (!n) {
         n = 1; // Define o valor padrão de n como 1 quando não há argumento
       }
   
       for (let i = 0; i < n; i++) {
+        let hash = generateRandomHash();
         // Início da medição do tempo total
         const totalStartTime = performance.now();
 
