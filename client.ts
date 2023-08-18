@@ -88,7 +88,8 @@ async function main(): Promise<void> {
                 await createAsset(contract);
                 break;
             case "createAssetEndorse":
-               await createAssetEndorse(contract);
+                const n = parseInt(process.argv[3]);
+               await createAssetEndorse(contract, n);
                break;
             case "getAll":
                 // Return all the current assets on the ledger.
@@ -187,51 +188,57 @@ async function createAsset(contract: Contract): Promise<void> {
     console.log('*** Transaction '+assetId+' committed successfully');
 }
 
-async function createAssetEndorse(contract: Contract) {
+async function createAssetEndorse(contract: Contract, n) {
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
+    if (!n) {
+        n = 1; // Define o valor padrão de n como 1 quando não há argumento
+      }
+  
+      for (let i = 0; i < n; i++) {
+        // Início da medição do tempo total
+        const totalStartTime = performance.now();
 
-    // Início da medição do tempo total
-    const totalStartTime = performance.now();
+        const proposal = contract.newProposal(methods[1], { arguments: [assetId, 'yellow', '5', 'Tom', '1300'] });
 
-    const proposal = contract.newProposal(methods[1], { arguments: [assetId, 'yellow', '5', 'Tom', '1300'] });
+        // Início da medição do tempo do endorse
+        const endorseStartTime = performance.now();
 
-    // Início da medição do tempo do endorse
-    const endorseStartTime = performance.now();
+        const transaction = await proposal.endorse();
 
-    const transaction = await proposal.endorse();
+        // Fim da medição do tempo do endorse
+        const endorseEndTime = performance.now();
+        const endorseTime = endorseEndTime - endorseStartTime;
 
-    // Fim da medição do tempo do endorse
-    const endorseEndTime = performance.now();
-    const endorseTime = endorseEndTime - endorseStartTime;
+        // Início da medição do tempo do commit
+        const commitStartTime = performance.now();
 
-    // Início da medição do tempo do commit
-    const commitStartTime = performance.now();
+        const commit = await transaction.submit();
 
-    const commit = await transaction.submit();
+        // Fim da medição do tempo do commit
+        const commitEndTime = performance.now();
+        const commitTime = commitEndTime - commitStartTime;
 
-    // Fim da medição do tempo do commit
-    const commitEndTime = performance.now();
-    const commitTime = commitEndTime - commitStartTime;
+        const result = transaction.getResult();
+        console.log('*** Waiting for transaction commit');
 
-    const result = transaction.getResult();
-    console.log('*** Waiting for transaction commit');
+        const status = await commit.getStatus();
 
-    const status = await commit.getStatus();
+        if (!status.successful) {
+            throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
+        }
 
-    if (!status.successful) {
-        throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
+        // Fim da medição do tempo total
+        const totalEndTime = performance.now();
+        const totalTime = totalEndTime - totalStartTime;
+
+        console.log('*** Transaction ' + assetId + ' committed successfully');
+
+        // Exibir os tempos medidos
+        console.log(`Time for endorse: ${endorseTime.toFixed(2)} ms`);
+        console.log(`Time for commit: ${commitTime.toFixed(2)} ms`);
+        console.log(`Total time: ${totalTime.toFixed(2)} ms`);
     }
-
-    // Fim da medição do tempo total
-    const totalEndTime = performance.now();
-    const totalTime = totalEndTime - totalStartTime;
-
-    console.log('*** Transaction ' + assetId + ' committed successfully');
-
-    // Exibir os tempos medidos
-    console.log(`Time for endorse: ${endorseTime.toFixed(2)} ms`);
-    console.log(`Time for commit: ${commitTime.toFixed(2)} ms`);
-    console.log(`Total time: ${totalTime.toFixed(2)} ms`);
+    console.log(`Total de ${n} transações "${methods[1]}" enviadas com sucesso.`);
 }
 
 
