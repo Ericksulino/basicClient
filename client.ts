@@ -145,7 +145,7 @@ const generateRandomHash = () => {
     const randomString = Math.random().toString();
     const hash = crypto.createHash('sha256').update(timestamp + randomString).digest('hex');
     const truncatedHash = hash.substring(0, 5); // Extrai os primeiros 5 caracteres do hash
-    return truncatedHash;
+    return "asset"+truncatedHash;
 };
 
 // const methods = ["InitLedger","createCar","queryAllCars","queryCar","transferCar",'updateCar'];
