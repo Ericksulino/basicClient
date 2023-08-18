@@ -241,7 +241,7 @@ async function createAssetEndorse(contract: Contract, n) {
         const totalEndTime = performance.now();
         const totalTime = totalEndTime - totalStartTime;
 
-        console.log('*** Transaction ' + assetId + ' committed successfully');
+        console.log('*** Transaction ' + hash + ' committed successfully');
 
         // Exibir os tempos medidos
         console.log(`Time for endorse: ${endorseTime.toFixed(2)} ms`);
