@@ -140,6 +140,14 @@ async function newSigner(): Promise<Signer> {
     return signers.newPrivateKeySigner(privateKey);
 }
 
+const generateRandomHash = () => {
+    const timestamp = new Date().getTime().toString();
+    const randomString = Math.random().toString();
+    const hash = crypto.createHash('sha256').update(timestamp + randomString).digest('hex');
+    const truncatedHash = hash.substring(0, 5); // Extrai os primeiros 5 caracteres do hash
+    return truncatedHash;
+};
+
 // const methods = ["InitLedger","createCar","queryAllCars","queryCar","transferCar",'updateCar'];
 
 const methods = ["InitLedger","CreateAsset","GetAllAssets","ReadAsset","TransferAsset",'UpdateAsset'];
@@ -189,6 +197,7 @@ async function createAsset(contract: Contract): Promise<void> {
 }
 
 async function createAssetEndorse(contract: Contract, n) {
+    let hash = generateRandomHash();
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
     if (!n) {
         n = 1; // Define o valor padrão de n como 1 quando não há argumento
@@ -198,7 +207,7 @@ async function createAssetEndorse(contract: Contract, n) {
         // Início da medição do tempo total
         const totalStartTime = performance.now();
 
-        const proposal = contract.newProposal(methods[1], { arguments: [assetId, 'yellow', '5', 'Tom', '1300'] });
+        const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
 
         // Início da medição do tempo do endorse
         const endorseStartTime = performance.now();
