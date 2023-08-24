@@ -106,7 +106,7 @@ async function main(): Promise<void> {
                 await updateNonExistentAsset(contract,keyUp)
                 break;
             default:
-                console.log("Argumento Inválido!: "+argument);
+                console.log("Invalid Argument!: "+argument);
         }
     } finally {
         gateway.close();
@@ -200,31 +200,31 @@ async function createAssetEndorse(contract: Contract, n) {
     
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
     if (!n) {
-        n = 1; // Define o valor padrão de n como 1 quando não há argumento
+        n = 1; // Sets the default value of n to 1 when there is no argument
       }
       const timingResults = []; // Array to store timing data
       for (let i = 0; i < n; i++) {
         let hash = generateRandomHash();
-        // Início da medição do tempo total
+        // Start of total time measurement
         const totalStartTime = performance.now();
 
         const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
 
-        // Início da medição do tempo do endorse
+        // Start of endorse time measurement
         const endorseStartTime = performance.now();
 
         const transaction = await proposal.endorse();
 
-        // Fim da medição do tempo do endorse
+        // End of endorse time measurement
         const endorseEndTime = performance.now();
         const endorseTime = endorseEndTime - endorseStartTime;
 
-        // Início da medição do tempo do commit
+        // Commit time measurement start
         const commitStartTime = performance.now();
 
         const commit = await transaction.submit();
 
-        // Fim da medição do tempo do commit
+        // End of commit time measurement
         const commitEndTime = performance.now();
         const commitTime = commitEndTime - commitStartTime;
 
@@ -237,7 +237,7 @@ async function createAssetEndorse(contract: Contract, n) {
             throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
         }
 
-        // Fim da medição do tempo total
+        // End of total time measurement
         const totalEndTime = performance.now();
         const totalTime = totalEndTime - totalStartTime;
 
@@ -251,7 +251,7 @@ async function createAssetEndorse(contract: Contract, n) {
             TotalTime: totalTime.toFixed(2) + ' ms'
         });
     }
-    console.log(`Total de ${n} transações "${methods[1]}" enviadas com sucesso.`);
+    console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
     // Display timing results in a table
     console.table(timingResults);
 }
