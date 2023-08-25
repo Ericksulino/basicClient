@@ -85,7 +85,8 @@ async function main(): Promise<void> {
                 break;
             case "createAsset":
                 // Create a new asset on the ledger.
-                await createAsset(contract);
+                const num = parseInt(process.argv[3]);
+                await createAsset(contract,num);
                 break;
             case "createAssetEndorse":
                 const n = parseInt(process.argv[3]);
@@ -181,19 +182,38 @@ async function getAllAssets(contract: Contract): Promise<void> {
 /**
  * Submit a transaction synchronously, blocking until it has been committed to the ledger.
  */
-async function createAsset(contract: Contract): Promise<void> {
+async function createAsset(contract: Contract, n): Promise<void> {
     console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
+    if (!n) {
+        n = 1; // Sets the default value of n to 1 when there is no argument
+      }
+      const timingResults = []; // Array to store timing data
+      for (let i = 0; i < n; i++) {
+        let hash = generateRandomHash();
+        // Start of total time measurement
+        const totalStartTime = performance.now();
+        await contract.submitTransaction(
+            methods[1],
+            hash,
+            'yellow',
+            '5',
+            'Tom',
+            '1300',
+        );
+        // End of total time measurement
+        const totalEndTime = performance.now();
+        const totalTime = totalEndTime - totalStartTime;
+        console.log('*** Transaction '+hash+' committed successfully');
 
-    await contract.submitTransaction(
-        methods[1],
-        assetId,
-        'yellow',
-        '5',
-        'Tom',
-        '1300',
-    );
-
-    console.log('*** Transaction '+assetId+' committed successfully');
+         // Collect timing data for this iteration
+         timingResults.push({
+            Hash: hash,
+            TotalTime: totalTime.toFixed(2) + ' ms'
+        });
+    }
+    console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
+    // Display timing results in a table
+    console.table(timingResults);
 }
 
 async function createAssetEndorse(contract: Contract, n) {
