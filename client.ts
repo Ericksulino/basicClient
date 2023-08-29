@@ -1,9 +1,3 @@
-/*
- * Copyright IBM Corp. All Rights Reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import * as grpc from '@grpc/grpc-js';
 import { connect, Contract, Identity, Signer, signers } from '@hyperledger/fabric-gateway';
 import * as crypto from 'crypto';
