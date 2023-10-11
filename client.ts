@@ -219,30 +219,30 @@ async function createAssetEndorse(contract: Contract, n) {
         let hash = generateRandomHash();
         // Start of total time measurement
         //const totalStartTime = performance.now();
-        const totalStartTime = new Date().getTime();
+        const totalStartTime = Date.now();
 
         const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
 
         // Start of endorse time measurement
         //const endorseStartTime = performance.now();
-        const endorseStartTime = new Date().getTime();
+        const endorseStartTime = Date.now();
 
         const transaction = await proposal.endorse();
 
         // End of endorse time measurement
         //const endorseEndTime = performance.now();
-        const endorseEndTime = new Date().getTime();
+        const endorseEndTime = Date.now();
         const endorseTime = endorseEndTime - endorseStartTime;
 
         // Commit time measurement start
         //const commitStartTime = performance.now();
-        const commitStartTime = new Date().getTime();
+        const commitStartTime = Date.now();
 
         const commit = await transaction.submit();
 
         // End of commit time measurement
         //const commitEndTime = performance.now();
-        const commitEndTime = new Date().getTime();
+        const commitEndTime = Date.now();
         const commitTime = commitEndTime - commitStartTime;
 
         const result = transaction.getResult();
@@ -256,7 +256,7 @@ async function createAssetEndorse(contract: Contract, n) {
 
         // End of total time measurement
         //const totalEndTime = performance.now();
-        const totalEndTime = new Date().getTime();
+        const totalEndTime = Date.now();
         const totalTime = totalEndTime - totalStartTime;
 
         console.log('*** Transaction ' + hash + ' committed successfully');
