@@ -214,7 +214,8 @@ async function createAssetEndorse(contract: Contract, n) {
     if (!n) {
         n = 1; // Sets the default value of n to 1 when there is no argument
       }
-      const timingResults = []; // Array to store timing data
+      //const timingResults = []; // Array to store timing data
+      console.log("StartTime Hash EndorseTime CommitTime TotalTime ");
       for (let i = 0; i < n; i++) {
         let hash = generateRandomHash();
         // Start of total time measurement
@@ -259,7 +260,7 @@ async function createAssetEndorse(contract: Contract, n) {
         const totalEndTime = Date.now();
         const totalTime = totalEndTime - totalStartTime;
 
-        console.log('*** Transaction ' + hash + ' committed successfully');
+        //console.log('*** Transaction ' + hash + ' committed successfully');
         /*
         // Collect timing data for this iteration
         timingResults.push({
@@ -269,7 +270,6 @@ async function createAssetEndorse(contract: Contract, n) {
             TotalTime: totalTime.toFixed(2) + ' ms'
         });
         */
-       console.log("StartTime  Hash  EndorseTime  CommitTime  TotalTime ");
        console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
     }
     console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
