@@ -247,7 +247,7 @@ async function createAssetEndorse(contract: Contract, n) {
         const commitTime = commitEndTime - commitStartTime;
 
         const result = transaction.getResult();
-        console.log('*** Waiting for transaction commit');
+        //console.log('*** Waiting for transaction commit');
 
         const status = await commit.getStatus();
 
