@@ -260,7 +260,7 @@ async function createAssetEndorse(contract: Contract, n) {
         const totalTime = totalEndTime - totalStartTime;
 
         console.log('*** Transaction ' + hash + ' committed successfully');
-
+        /*
         // Collect timing data for this iteration
         timingResults.push({
             Hash: hash,
@@ -268,10 +268,13 @@ async function createAssetEndorse(contract: Contract, n) {
             CommitTime: commitTime.toFixed(2) + ' ms',
             TotalTime: totalTime.toFixed(2) + ' ms'
         });
+        */
+       console.log("StartTime               Hash                        EndorseTime  CommitTime   TotalTime ");
+       console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
     }
     console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
     // Display timing results in a table
-    console.table(timingResults);
+    //console.table(timingResults);
 }
 
 
