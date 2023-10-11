@@ -272,7 +272,7 @@ async function createAssetEndorse(contract: Contract, n) {
         */
        console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
     }
-    console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
+    //console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
     // Display timing results in a table
     //console.table(timingResults);
 }
