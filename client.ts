@@ -32,7 +32,7 @@ const assetId = `asset${Date.now()}`;
 
 async function main(): Promise<void> {
 
-    await displayInputParameters();
+    //await displayInputParameters();
 
     // The gRPC client connection should be shared by all Gateway connections to this endpoint.
     const client = await newGrpcConnection();
@@ -210,7 +210,7 @@ async function createAsset(contract: Contract, n): Promise<void> {
 
 async function createAssetEndorse(contract: Contract, n) {
     
-    console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
+    //console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
     if (!n) {
         n = 1; // Sets the default value of n to 1 when there is no argument
       }
