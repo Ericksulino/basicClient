@@ -7,12 +7,11 @@ import { TextDecoder } from 'util';
 
 const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
 const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
-//const chaincodeName = envOrDefault('CHAINCODE_NAME', 'fabcar');
 const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
 // Path to crypto materials.
 const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..','organizations', 'peerOrganizations', 'org1.example.com'));
-//const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..','..', 'peerOrganizations', 'org1.example.com'));
+
 // Path to user private key directory.
 const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore'));
 
@@ -139,11 +138,10 @@ const generateRandomHash = () => {
     const timestamp = new Date().getTime().toString();
     const randomString = Math.random().toString();
     const hash = crypto.createHash('sha256').update(timestamp + randomString).digest('hex');
-    const truncatedHash = hash.substring(0, 5); // Extrai os primeiros 5 caracteres do hash
-    return "asset"+truncatedHash;
+    //const truncatedHash = hash.substring(0, 5); // Extrai os primeiros 5 caracteres do hash
+    return "asset"+hash;
 };
 
-// const methods = ["InitLedger","createCar","queryAllCars","queryCar","transferCar",'updateCar'];
 
 const methods = ["InitLedger","CreateAsset","GetAllAssets","ReadAsset","TransferAsset",'UpdateAsset'];
 
@@ -220,26 +218,31 @@ async function createAssetEndorse(contract: Contract, n) {
       for (let i = 0; i < n; i++) {
         let hash = generateRandomHash();
         // Start of total time measurement
-        const totalStartTime = performance.now();
+        //const totalStartTime = performance.now();
+        const totalStartTime = new Date().getTime();
 
         const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
 
         // Start of endorse time measurement
-        const endorseStartTime = performance.now();
+        //const endorseStartTime = performance.now();
+        const endorseStartTime = new Date().getTime();
 
         const transaction = await proposal.endorse();
 
         // End of endorse time measurement
-        const endorseEndTime = performance.now();
+        //const endorseEndTime = performance.now();
+        const endorseEndTime = new Date().getTime();
         const endorseTime = endorseEndTime - endorseStartTime;
 
         // Commit time measurement start
-        const commitStartTime = performance.now();
+        //const commitStartTime = performance.now();
+        const commitStartTime = new Date().getTime();
 
         const commit = await transaction.submit();
 
         // End of commit time measurement
-        const commitEndTime = performance.now();
+        //const commitEndTime = performance.now();
+        const commitEndTime = new Date().getTime();
         const commitTime = commitEndTime - commitStartTime;
 
         const result = transaction.getResult();
@@ -252,7 +255,8 @@ async function createAssetEndorse(contract: Contract, n) {
         }
 
         // End of total time measurement
-        const totalEndTime = performance.now();
+        //const totalEndTime = performance.now();
+        const totalEndTime = new Date().getTime();
         const totalTime = totalEndTime - totalStartTime;
 
         console.log('*** Transaction ' + hash + ' committed successfully');
