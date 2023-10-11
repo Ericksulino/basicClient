@@ -137,9 +137,9 @@ async function newSigner(): Promise<Signer> {
 const generateRandomHash = () => {
     const timestamp = new Date().getTime().toString();
     const randomString = Math.random().toString();
-    const hash = crypto.createHash('sha256').update(timestamp + randomString).digest('hex');
-    //const truncatedHash = hash.substring(0, 5); // Extrai os primeiros 5 caracteres do hash
-    return "asset"+hash;
+    const hash = crypto.createHash('sha512').update(timestamp + randomString).digest('hex');
+    const truncatedHash = hash.substring(0, 8); // Extrai os primeiros 5 caracteres do hash
+    return "asset"+truncatedHash;
 };
 
 
@@ -269,7 +269,7 @@ async function createAssetEndorse(contract: Contract, n) {
             TotalTime: totalTime.toFixed(2) + ' ms'
         });
         */
-       console.log("StartTime               Hash                        EndorseTime  CommitTime   TotalTime ");
+       console.log("StartTime  Hash  EndorseTime  CommitTime  TotalTime ");
        console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
     }
     console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
