@@ -83,7 +83,11 @@ async function main(): Promise<void> {
                 break;
             case "createAssetEndorse":
                 const n = parseInt(process.argv[3]);
-               await createAssetEndorse(contract, n);
+                if(process.argv[4]==="B"){
+                    await createAssetEndorseBenchmarks(contract, n);
+                }else{
+                    await createAssetEndorse(contract, n);
+                }
                break;
             case "getAll":
                 // Return all the current assets on the ledger.
@@ -208,82 +212,59 @@ async function createAsset(contract: Contract, n): Promise<void> {
     console.table(timingResults);
 }
 
-async function createAssetEndorse(contract: Contract, n) {
-    
-    //console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
-    if (!n) {
-        n = 1; // Sets the default value of n to 1 when there is no argument
-      }
-      //const timingResults = []; // Array to store timing data
-      console.log("StartTime Hash EndorseTime CommitTime TotalTime ");
-      for (let i = 0; i < n; i++) {
-        let hash = generateRandomHash();
-        // Start of total time measurement
-        //const totalStartTime = performance.now();
-        const totalStartTime = Date.now();
-
-        const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
-
-        // Start of endorse time measurement
-        //const endorseStartTime = performance.now();
-        const endorseStartTime = Date.now();
-
-        const transaction = await proposal.endorse();
-
-        // End of endorse time measurement
-        //const endorseEndTime = performance.now();
-        const endorseEndTime = Date.now();
-        const endorseTime = endorseEndTime - endorseStartTime;
-
-        // Commit time measurement start
-        //const commitStartTime = performance.now();
-        const commitStartTime = Date.now();
-
-        const commit = await transaction.submit();
-
-        // End of commit time measurement
-        //const commitEndTime = performance.now();
-        const commitEndTime = Date.now();
-        const commitTime = commitEndTime - commitStartTime;
-
-        const result = transaction.getResult();
-        //console.log('*** Waiting for transaction commit');
-
-        const status = await commit.getStatus();
-
-        if (!status.successful) {
-            throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
-        }
-
-        // End of total time measurement
-        //const totalEndTime = performance.now();
-        const totalEndTime = Date.now();
-        const totalTime = totalEndTime - totalStartTime;
-
-        //console.log('*** Transaction ' + hash + ' committed successfully');
-        /*
-        // Collect timing data for this iteration
-        timingResults.push({
-            Hash: hash,
-            EndorseTime: endorseTime.toFixed(2) + ' ms',
-            CommitTime: commitTime.toFixed(2) + ' ms',
-            TotalTime: totalTime.toFixed(2) + ' ms'
-        });
-        */
-       console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
-    }
-    //console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
-    // Display timing results in a table
-    //console.table(timingResults);
-}
-
 async function createAssetEndorseBenchmarks(contract: Contract, n) {
     
-    //console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
     if (!n) {
         n = 1; // Sets the default value of n to 1 when there is no argument
       }
-      //const timingResults = []; // Array to store timing data
+      for (let i = 0; i < n; i++) {
+        let hash = generateRandomHash();
+        // Start of total time measurement
+        const totalStartTime = Date.now();
+
+        const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
+
+        // Start of endorse time measurement
+        const endorseStartTime = Date.now();
+
+        const transaction = await proposal.endorse();
+
+        // End of endorse time measurement
+        const endorseEndTime = Date.now();
+        const endorseTime = endorseEndTime - endorseStartTime;
+
+        // Commit time measurement start
+        const commitStartTime = Date.now();
+
+        const commit = await transaction.submit();
+
+        // End of commit time measurement
+        const commitEndTime = Date.now();
+        const commitTime = commitEndTime - commitStartTime;
+
+        const result = transaction.getResult();
+
+        const status = await commit.getStatus();
+
+        if (!status.successful) {
+            throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
+        }
+
+        // End of total time measurement
+        const totalEndTime = Date.now();
+        const totalTime = totalEndTime - totalStartTime;
+
+       console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
+    }
+}
+
+async function createAssetEndorse(contract: Contract, n) {
+    
+    console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
+    if (!n) {
+        n = 1; // Sets the default value of n to 1 when there is no argument
+      }
+      const timingResults = []; // Array to store timing data
       console.log("StartTime Hash EndorseTime CommitTime TotalTime ");
       for (let i = 0; i < n; i++) {
         let hash = generateRandomHash();
@@ -294,25 +275,21 @@ async function createAssetEndorseBenchmarks(contract: Contract, n) {
         const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
 
         // Start of endorse time measurement
-        //const endorseStartTime = performance.now();
-        const endorseStartTime = Date.now();
+        const endorseStartTime = performance.now();
 
         const transaction = await proposal.endorse();
 
         // End of endorse time measurement
-        //const endorseEndTime = performance.now();
-        const endorseEndTime = Date.now();
+        const endorseEndTime = performance.now();
         const endorseTime = endorseEndTime - endorseStartTime;
 
         // Commit time measurement start
-        //const commitStartTime = performance.now();
-        const commitStartTime = Date.now();
+        const commitStartTime = performance.now();
 
         const commit = await transaction.submit();
 
         // End of commit time measurement
-        //const commitEndTime = performance.now();
-        const commitEndTime = Date.now();
+        const commitEndTime = performance.now();
         const commitTime = commitEndTime - commitStartTime;
 
         const result = transaction.getResult();
@@ -325,12 +302,11 @@ async function createAssetEndorseBenchmarks(contract: Contract, n) {
         }
 
         // End of total time measurement
-        //const totalEndTime = performance.now();
-        const totalEndTime = Date.now();
+        const totalEndTime = performance.now();
         const totalTime = totalEndTime - totalStartTime;
 
-        //console.log('*** Transaction ' + hash + ' committed successfully');
-        /*
+        console.log('*** Transaction ' + hash + ' committed successfully');
+        
         // Collect timing data for this iteration
         timingResults.push({
             Hash: hash,
@@ -338,12 +314,12 @@ async function createAssetEndorseBenchmarks(contract: Contract, n) {
             CommitTime: commitTime.toFixed(2) + ' ms',
             TotalTime: totalTime.toFixed(2) + ' ms'
         });
-        */
-       console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
+
+       
     }
-    //console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
+    console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
     // Display timing results in a table
-    //console.table(timingResults);
+    console.table(timingResults);
 }
 
 
