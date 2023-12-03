@@ -83,11 +83,7 @@ async function main(): Promise<void> {
                 break;
             case "createAssetEndorse":
                 const n = parseInt(process.argv[3]);
-                if(process.argv[4] == 'B'){
-                    createAssetEndorseBenchmarks(contract, n)
-                }else{
-                     await createAssetEndorse(contract, n);
-                }
+                createAssetEndorseBenchmarks(contract, n)
                break;
             case "getAll":
                 // Return all the current assets on the ledger.
@@ -268,7 +264,6 @@ async function createAssetEndorse(contract: Contract, n) {
             CommitTime: commitTime.toFixed(2) + ' ms',
             TotalTime: totalTime.toFixed(2) + ' ms'
         });
-       console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
     }
     console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
     //Display timing results in a table
