@@ -265,7 +265,6 @@ async function createAssetEndorse(contract: Contract, n) {
         n = 1; // Sets the default value of n to 1 when there is no argument
       }
       const timingResults = []; // Array to store timing data
-      console.log("StartTime Hash EndorseTime CommitTime TotalTime ");
       for (let i = 0; i < n; i++) {
         let hash = generateRandomHash();
         // Start of total time measurement
