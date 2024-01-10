@@ -268,8 +268,7 @@ async function createAssetEndorse(contract: Contract, n) {
       for (let i = 0; i < n; i++) {
         let hash = generateRandomHash();
         // Start of total time measurement
-        //const totalStartTime = performance.now();
-        const totalStartTime = Date.now();
+        const totalStartTime = performance.now();
 
         const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
 
