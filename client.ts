@@ -84,6 +84,7 @@ async function main(): Promise<void> {
             case "createAssetEndorse":
                 const n = parseInt(process.argv[3]);
                 if(process.argv[4]==="B"){
+		    const hash = process.argv[5];
                     await createAssetEndorseBenchmarks(contract, n);
                 }else{
                     await createAssetEndorse(contract, n);
@@ -138,11 +139,10 @@ async function newSigner(): Promise<Signer> {
     return signers.newPrivateKeySigner(privateKey);
 }
 
-const generateRandomHash = () => {
-    const timestamp = new Date().getTime().toString();
-    const randomString = Math.random().toString();
+const generateRandomHash = (timestamp) => {
+    const randomString = crypto.randomBytes(8).toString('hex');
     const hash = crypto.createHash('sha512').update(timestamp + randomString).digest('hex');
-    const truncatedHash = hash.substring(0, 8); // Extrai os primeiros 5 caracteres do hash
+    const truncatedHash = hash.substring(0, 12);
     return "asset"+truncatedHash;
 };
 
@@ -185,7 +185,7 @@ async function createAsset(contract: Contract, n): Promise<void> {
       }
       const timingResults = []; // Array to store timing data
       for (let i = 0; i < n; i++) {
-        let hash = generateRandomHash();
+        let hash = generateRandomHash(Date.now());
         // Start of total time measurement
         const totalStartTime = performance.now();
         await contract.submitTransaction(
@@ -212,41 +212,43 @@ async function createAsset(contract: Contract, n): Promise<void> {
     console.table(timingResults);
 }
 
-async function createAssetEndorseBenchmarks(contract: Contract, n) {
+async function createAssetEndorseBenchmark(contract: Contract, hash) {
     
-    if (!n) {
-        n = 1; // Sets the default value of n to 1 when there is no argument
-      }
-      for (let i = 0; i < n; i++) {
-        let hash = generateRandomHash();
         // Start of total time measurement
         const totalStartTime = Date.now();
-
+	//let hash = generateRandomHash(totalStartTime);
         const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
 
         // Start of endorse time measurement
-        const endorseStartTime = Date.now();
+        //const endorseStartTime = Date.now();
 
         const transaction = await proposal.endorse();
 
         // End of endorse time measurement
         const endorseEndTime = Date.now();
-        const endorseTime = endorseEndTime - endorseStartTime;
+        const endorseTime = endorseEndTime - totalStartTime;
+
+        // Ordereing time measurement start
+        const orderingStartTime = Date.now();
+
+        const commit = await transaction.submit();
+
+	// End of ordereing time measurement
+        const orderingEndTime = Date.now();
+        const orderingTime = orderingEndTime - orderingStartTime;
 
         // Commit time measurement start
         const commitStartTime = Date.now();
+        const status = await commit.getStatus();
 
-        const commit = await transaction.submit();
+        //const result = transaction.getResult();
 
         // End of commit time measurement
         const commitEndTime = Date.now();
         const commitTime = commitEndTime - commitStartTime;
 
-        const result = transaction.getResult();
-
-        const status = await commit.getStatus();
-
         if (!status.successful) {
+	    //continue;
             throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
         }
 
@@ -254,8 +256,19 @@ async function createAssetEndorseBenchmarks(contract: Contract, n) {
         const totalEndTime = Date.now();
         const totalTime = totalEndTime - totalStartTime;
 
-       console.log(`${totalStartTime} ${hash} ${endorseEndTime} ${commitEndTime} ${totalEndTime}`);
-    }
+       console.log(`${totalStartTime} ${hash} ${endorseTime} ${orderingTime} ${commitTime} ${totalTime}`);
+
+}
+
+async function createAssetEndorseBenchmarks(contract, n = 1) {
+    const hashes = Array.from({ length: n }, () => generateRandomHash(Date.now()));
+    const benchmarkPromises = hashes.map(hash => createAssetEndorseBenchmark(contract, hash));
+    try {
+        await Promise.all(benchmarkPromises);
+    } catch (error) {
+	//continue;
+        console.error('Ocorreu um erro:', error);
+    }
 }
 
 async function createAssetEndorse(contract: Contract, n) {
@@ -266,11 +279,13 @@ async function createAssetEndorse(contract: Contract, n) {
       }
       const timingResults = []; // Array to store timing data
       for (let i = 0; i < n; i++) {
-        let hash = generateRandomHash();
+        let hash = generateRandomHash(Date.now());
         // Start of total time measurement
         const totalStartTime = performance.now();
 
         const proposal = contract.newProposal(methods[1], { arguments: [hash, 'yellow', '5', 'Tom', '1300'] });
+
+        let date = new Date();
 
         // Start of endorse time measurement
         const endorseStartTime = performance.now();
@@ -282,42 +297,46 @@ async function createAssetEndorse(contract: Contract, n) {
         const endorseTime = endorseEndTime - endorseStartTime;
 
         // Commit time measurement start
-        const commitStartTime = performance.now();
+        const orderingStartTime = performance.now();
 
         const commit = await transaction.submit();
 
         // End of commit time measurement
-        const commitEndTime = performance.now();
-        const commitTime = commitEndTime - commitStartTime;
+        const orderingEndTime = performance.now();
+        const orderingTime = orderingEndTime - orderingStartTime;
 
-        const result = transaction.getResult();
-        //console.log('*** Waiting for transaction commit');
+        // const result = transaction.getResult(); comentei
+        // console.log('*** Waiting for transaction commit');
 
+        const commitStartTime = performance.now();
         const status = await commit.getStatus();
 
+        const commitEndTime = performance.now();
+        const commitTime = commitEndTime - commitStartTime;
         if (!status.successful) {
-            throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
+            continue;
+            // throw new Error(Transaction ${status.transactionId} failed to commit with status code ${status.code});
         }
 
         // End of total time measurement
         const totalEndTime = performance.now();
         const totalTime = totalEndTime - totalStartTime;
 
-        console.log('*** Transaction ' + hash + ' committed successfully');
-        
+        // console.log('*** Transaction ' + hash + ' committed successfully');
+
         // Collect timing data for this iteration
         timingResults.push({
+            Start: date,
             Hash: hash,
             EndorseTime: endorseTime.toFixed(2) + ' ms',
+            orderingTime: orderingTime.toFixed(2) + ' ms',
             CommitTime: commitTime.toFixed(2) + ' ms',
             TotalTime: totalTime.toFixed(2) + ' ms'
         });
-
-       
     }
-    console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
-    // Display timing results in a table
+
     console.table(timingResults);
+
 }
 
 
