@@ -268,7 +268,7 @@ async function createAssetEndorseBenchmarks(contract, n = 1) {
     } catch (error) {
 	//continue;
         console.error('Ocorreu um erro:', error);
-    }
+    }
 }
 
 async function createAssetEndorse(contract: Contract, n) {
