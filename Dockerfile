@@ -9,4 +9,8 @@ WORKDIR /basicClient
 # Adiciona a pasta do aplicativo ao contêiner
 COPY . /basicClient
 
-CMD ["bash"]
+# Compila o código TypeScript para JavaScript
+RUN tsc
+
+# Define o comando para manter o contêiner em execução
+CMD ["tail", "-f", "/dev/null"]
