@@ -149,7 +149,9 @@ const generateRandomHash = (timestamp) => {
 };
 
 
-const methods = ["InitLedger","CreateAsset","GetAllAssets","ReadAsset","TransferAsset",'UpdateAsset'];
+//const methods = ["InitLedger","CreateAsset","GetAllAssets","ReadAsset","TransferAsset",'UpdateAsset'];
+
+const methods = ["InitLedger","CreateCar","QueryAllCars","QueryCar","ChangeCarOwner",'UpdateAsset'];
 
 /**
  * This type of transaction would typically only be run once by an application the first time it was started after its
