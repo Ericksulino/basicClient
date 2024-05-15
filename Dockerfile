@@ -6,10 +6,13 @@ RUN apt-get update && \
     npm install -g n && \
     n latest
 
+# Instala o TypeScript globalmente
+RUN npm install -g typescript
+
 # Define o diretório de trabalho
 WORKDIR /basicClient
 
 # Adiciona a pasta do aplicativo ao contêiner
-COPY ./basicClient /basicClient
+COPY . /basicClient
 
 CMD ["bash"]
