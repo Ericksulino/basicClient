@@ -13,4 +13,5 @@ COPY . /basicClient
 RUN tsc
 
 # Define o comando para manter o contêiner em execução
-CMD ["tail", "-f", "/dev/null"]
+CMD ["sleep", "infinity"]
+
