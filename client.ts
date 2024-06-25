@@ -233,69 +233,54 @@ async function createAssetWithTPS(contract: Contract, tps: number, n: number): P
     }
 
     const interval = 1000 / tps; // Interval in milliseconds between each transaction to achieve the desired TPS
-    const batchSize = Math.ceil(tps); // Number of transactions to send in each batch
     const timingResults = []; // Array to store timing data
 
-    let batchStartTime = performance.now();
+    const tasks = [];
+    for (let i = 0; i < n; i++) {
+        const task = async () => {
+            const hash = generateRandomHash(Date.now());
 
-    for (let i = 0; i < n; i += batchSize) {
-        const tasks = [];
-        for (let j = 0; j < batchSize && (i + j) < n; j++) {
-            const task = async () => {
-                const hash = generateRandomHash(Date.now());
+            // Start of total time measurement
+            const totalStartTime = performance.now();
 
-                // Start of total time measurement
-                const totalStartTime = performance.now();
+            try {
+                await contract.submitTransaction(
+                    methods[1],
+                    hash,
+                    'yellow',
+                    '5',
+                    'Tom',
+                    '1300'
+                );
 
-                try {
-                    await contract.submitTransaction(
-                        methods[1],
-                        hash,
-                        'yellow',
-                        '5',
-                        'Tom',
-                        '1300'
-                    );
+                // End of total time measurement
+                const totalEndTime = performance.now();
+                const totalTime = totalEndTime - totalStartTime;
+                console.log(`*** Transaction ${hash} committed successfully`);
 
-                    // End of total time measurement
-                    const totalEndTime = performance.now();
-                    const totalTime = totalEndTime - totalStartTime;
-                    console.log(`*** Transaction ${hash} committed successfully`);
+                // Collect timing data for this iteration
+                timingResults.push({
+                    Hash: hash,
+                    TotalTime: totalTime.toFixed(2) + ' ms'
+                });
+            } catch (error) {
+                console.error(`Error in transaction ${hash}:`, error);
+            }
+        };
 
-                    // Collect timing data for this iteration
-                    timingResults.push({
-                        Hash: hash,
-                        TotalTime: totalTime.toFixed(2) + ' ms'
-                    });
-                } catch (error) {
-                    console.error(`Error in transaction ${hash}:`, error);
-                }
-            };
-
-            tasks.push(task());
-        }
-
-        // Wait for all transactions in the current batch to complete
-        await Promise.all(tasks);
-
-        const batchEndTime = performance.now();
-        const batchTime = batchEndTime - batchStartTime;
+        tasks.push(task());
 
         // Sleep to maintain the desired TPS rate
-        const waitTime = (batchSize * interval) - batchTime;
-        if (waitTime > 0) {
-            await sleep(waitTime);
-        }
-
-        // Reset the batch start time for the next batch
-        batchStartTime = performance.now();
+        await sleep(interval);
     }
+
+    // Wait for all transactions to complete
+    await Promise.all(tasks);
 
     console.log(`Total of ${n} transactions "${methods[1]}" sent successfully at ${tps} TPS.`);
     // Display timing results in a table
     console.table(timingResults);
 }
-
 
 
 async function createAssetEndorseBenchmark(contract: Contract, hash) {
