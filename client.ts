@@ -81,12 +81,17 @@ async function main(): Promise<void> {
             case "createAsset":
                 // Create a new asset on the ledger.
                 const num = parseInt(process.argv[3]);
-                await createAsset(contract,num);
+                if(process.argv[4]==="T"){
+                    const tps = parseInt(process.argv[5]);
+                    createAssetWithTPS(contract,tps,num);
+                }else{
+                    await createAsset(contract,num);
+                }
                 break;
             case "createAssetEndorse":
                 const n = parseInt(process.argv[3]);
                 if(process.argv[4]==="B"){
-		    const hash = process.argv[5];
+		            const hash = process.argv[5];
                     await createAssetEndorseBenchmarks(contract, n);
                 }else{
                     await createAssetEndorse(contract, n);
@@ -212,6 +217,57 @@ async function createAsset(contract: Contract, n): Promise<void> {
         });
     }
     console.log(`Total of ${n} transactions "${methods[1]}" sent successfully.`);
+    // Display timing results in a table
+    console.table(timingResults);
+}
+
+async function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function createAssetWithTPS(contract: Contract, tps: number, n: number): Promise<void> {
+    console.log(`\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments at ${tps} TPS`);
+    
+    if (!n) {
+        n = 1; // Sets the default value of n to 1 when there is no argument
+    }
+
+    const interval = 1000 / tps; // Interval in milliseconds between each transaction to achieve the desired TPS
+    const timingResults = []; // Array to store timing data
+
+    for (let i = 0; i < n; i++) {
+        const hash = generateRandomHash(Date.now());
+        
+        // Start of total time measurement
+        const totalStartTime = performance.now();
+
+        await contract.submitTransaction(
+            methods[1],
+            hash,
+            'yellow',
+            '5',
+            'Tom',
+            '1300',
+        );
+
+        // End of total time measurement
+        const totalEndTime = performance.now();
+        const totalTime = totalEndTime - totalStartTime;
+        console.log(`*** Transaction ${hash} committed successfully`);
+
+        // Collect timing data for this iteration
+        timingResults.push({
+            Hash: hash,
+            TotalTime: totalTime.toFixed(2) + ' ms'
+        });
+
+        // Sleep to maintain the desired TPS rate
+        if (i < n - 1) {
+            await sleep(interval);
+        }
+    }
+
+    console.log(`Total of ${n} transactions "${methods[1]}" sent successfully at ${tps} TPS.`);
     // Display timing results in a table
     console.table(timingResults);
 }
