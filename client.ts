@@ -227,7 +227,7 @@ async function sleep(ms: number): Promise<void> {
 
 async function createAssetWithTPS(contract: Contract, tps: number, n: number): Promise<void> {
     console.log(`\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments at ${tps} TPS`);
-    
+
     if (!n) {
         n = 1; // Sets the default value of n to 1 when there is no argument
     }
@@ -237,33 +237,43 @@ async function createAssetWithTPS(contract: Contract, tps: number, n: number): P
 
     for (let i = 0; i < n; i++) {
         const hash = generateRandomHash(Date.now());
-        
+
         // Start of total time measurement
         const totalStartTime = performance.now();
 
-        await contract.submitTransaction(
-            methods[1],
-            hash,
-            'yellow',
-            '5',
-            'Tom',
-            '1300',
-        );
+        try {
+            await contract.submitTransaction(
+                methods[1],
+                hash,
+                'yellow',
+                '5',
+                'Tom',
+                '1300'
+            );
 
-        // End of total time measurement
-        const totalEndTime = performance.now();
-        const totalTime = totalEndTime - totalStartTime;
-        console.log(`*** Transaction ${hash} committed successfully`);
+            // End of total time measurement
+            const totalEndTime = performance.now();
+            const totalTime = totalEndTime - totalStartTime;
+            console.log(`*** Transaction ${hash} committed successfully`);
 
-        // Collect timing data for this iteration
-        timingResults.push({
-            Hash: hash,
-            TotalTime: totalTime.toFixed(2) + ' ms'
-        });
+            // Collect timing data for this iteration
+            timingResults.push({
+                Hash: hash,
+                TotalTime: totalTime.toFixed(2) + ' ms'
+            });
 
-        // Sleep to maintain the desired TPS rate
-        if (i < n - 1) {
-            await sleep(interval);
+            // Sleep to maintain the desired TPS rate
+            if (i < n - 1) {
+                await sleep(interval);
+            }
+        } catch (error) {
+            console.error(`Error in transaction ${hash}:`, error);
+
+            if (error.message.includes('Channel has been shut down')) {
+                // Handle the error - you may want to reinitialize the client or retry the transaction
+                console.log('Reinitializing the connection...');
+                // Reinitialize the contract or perform other error handling here
+            }
         }
     }
 
@@ -271,6 +281,7 @@ async function createAssetWithTPS(contract: Contract, tps: number, n: number): P
     // Display timing results in a table
     console.table(timingResults);
 }
+
 
 async function createAssetEndorseBenchmark(contract: Contract, hash) {
     
