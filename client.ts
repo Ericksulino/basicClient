@@ -221,7 +221,7 @@ async function createAsset(contract: Contract, n): Promise<void> {
     console.table(timingResults);
 }
 
-function sleep(ms: number): Promise<void> {
+async function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -232,10 +232,10 @@ async function createAssetWithTPS(contract: Contract, tps: number, n: number): P
         n = 1; // Sets the default value of n to 1 when there is no argument
     }
 
-    const startTime = performance.now();
     const interval = 1000 / tps; // Interval in milliseconds between each transaction to achieve the desired TPS
-    const tasks = [];
+    const timingResults = []; // Array to store timing data
 
+    const tasks = [];
     for (let i = 0; i < n; i++) {
         const task = async () => {
             const hash = generateRandomHash(Date.now());
@@ -259,32 +259,28 @@ async function createAssetWithTPS(contract: Contract, tps: number, n: number): P
                 console.log(`*** Transaction ${hash} committed successfully`);
 
                 // Collect timing data for this iteration
-                return {
+                timingResults.push({
                     Hash: hash,
                     TotalTime: totalTime.toFixed(2) + ' ms'
-                };
+                });
             } catch (error) {
                 console.error(`Error in transaction ${hash}:`, error);
-                return null;
             }
         };
 
         tasks.push(task());
+
+        // Sleep to maintain the desired TPS rate
+        await sleep(interval);
     }
 
     // Wait for all transactions to complete
-    const results = await Promise.all(tasks);
-
-    const endTime = performance.now();
-    const totalTime = endTime - startTime;
+    await Promise.all(tasks);
 
     console.log(`Total of ${n} transactions "${methods[1]}" sent successfully at ${tps} TPS.`);
-    console.log(`Total time taken: ${totalTime.toFixed(2)} ms`);
-
     // Display timing results in a table
-    console.table(results.filter(result => result !== null));
+    console.table(timingResults);
 }
-
 
 
 
